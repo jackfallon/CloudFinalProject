@@ -1,8 +1,12 @@
-# Welcome to your CDK JavaScript project
+# CloudFinalProject
 
-This is a blank project for CDK development with JavaScript.
+A cloud-based event management system built with AWS CDK, React, and Node.js.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app. The build step is not required when using JavaScript.
+## Project Structure
+
+- `/frontend` - React frontend application
+- `/backend` - Node.js Lambda functions
+- `/lib` - CDK infrastructure code
 
 ## Useful commands
 
