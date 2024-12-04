@@ -1,7 +1,7 @@
 # CloudFinalProject
 A cloud-based event management system built with AWS CDK, React, and Node.js.
 
-#AWS Services Used
+##AWS Services Used
 - CDK
 - Lambda
 - RDS
@@ -9,7 +9,7 @@ A cloud-based event management system built with AWS CDK, React, and Node.js.
 - Cognito
 - API Gateway
 
-#Github Repositories
+##Github Repositories
 - The completed GitHub repository with all of the correct code for the project is at https://github.com/jackfallon/CloudFinalProject
 - The first GitHub repository that was used, but contains incorrect, outdated code for the project is at https://github.com/jackfallon/EventManager
 
