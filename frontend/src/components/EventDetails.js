@@ -12,13 +12,14 @@ import {
   List,
   ListItem,
   ListItemText,
+  Alert,
 } from '@mui/material';
 
 function EventDetails() {
   const { id } = useParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [participants, setParticipants] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchEventDetails();
@@ -26,44 +27,47 @@ function EventDetails() {
 
   const fetchEventDetails = async () => {
     try {
-      const session = await Auth.currentSession();
-      const token = session.getIdToken().getJwtToken();
-
-      const eventData = await API.get('events', `/events/${id}`, {
-        headers: {
-          Authorization: token
-        }
-      });
+      window.DEBUG_LOG('Fetching event details for:', id);
+      const eventData = await API.get('events', `/events/${id}`);
+      window.DEBUG_LOG('Event data:', eventData);
       setEvent(eventData);
-      // Fetch participants if available in your API
-      const participantsData = await API.get('events', `/events/${id}/participants`, {
-        headers: {
-          Authorization: token
-        }
-      });
-      setParticipants(participantsData);
       setLoading(false);
+      setError(null);
     } catch (error) {
       console.error('Error fetching event details:', error);
+      setError('Failed to load event details: ' + (error.message || 'Unknown error'));
       setLoading(false);
     }
   };
 
   const handleSignUp = async () => {
     try {
-      const session = await Auth.currentSession();
-      const token = session.getIdToken().getJwtToken();
-
-      await API.post('events', '/events/signup', {
-        headers: {
-          Authorization: token
-        },
-        body: { eventId: id }
+      window.DEBUG_LOG('Signing up for event:', id);
+      
+      // Get current user's email
+      const user = await Auth.currentAuthenticatedUser();
+      const userEmail = user.attributes.email;
+      window.DEBUG_LOG('User email:', userEmail);
+      
+      const response = await API.post('events', '/events/signup', {
+        body: { 
+          eventId: id,
+          userEmail 
+        }
       });
-      // Refresh participants list
+      window.DEBUG_LOG('Signup response:', response);
+      
+      // Show success message
+      setError(null);
+      alert('Successfully signed up for event!');
+      
+      // Refresh event details
       fetchEventDetails();
     } catch (error) {
-      console.error('Error signing up for event:', error);
+      window.DEBUG_LOG('Error signing up for event:', error);
+      // Get the error message from the server response if available
+      const errorMessage = error.response?.data?.message || error.message || 'An error occurred';
+      setError(errorMessage);
     }
   };
 
@@ -86,6 +90,11 @@ function EventDetails() {
   return (
     <Container maxWidth="md" sx={{ mt: 4 }}>
       <Paper sx={{ p: 3 }}>
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
         <Typography variant="h4" gutterBottom>
           {event.title}
         </Typography>
@@ -115,9 +124,9 @@ function EventDetails() {
           Participants
         </Typography>
         <List>
-          {participants.map((participant) => (
-            <ListItem key={participant.id}>
-              <ListItemText primary={participant.name} />
+          {event.participants && event.participants.map((participant, index) => (
+            <ListItem key={index}>
+              <ListItemText primary={participant} />
             </ListItem>
           ))}
         </List>

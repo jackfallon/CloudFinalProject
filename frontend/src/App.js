@@ -10,7 +10,6 @@ import EventList from './components/EventList';
 import CreateEvent from './components/CreateEvent';
 import EventDetails from './components/EventDetails';
 
-// Debug function that won't be minified
 window.DEBUG_LOG = window.DEBUG_LOG || ((...args) => {
   if (process.env.REACT_APP_DEBUG === 'true') {
     console.log('[DEBUG]', ...args);
@@ -38,21 +37,8 @@ const amplifyConfig = {
       {
         name: 'events',
         endpoint: process.env.REACT_APP_API_URL,
-        region: process.env.REACT_APP_REGION,
-        custom_header: async () => {
-          try {
-            const session = await Auth.currentSession();
-            const token = session.getIdToken().getJwtToken();
-            window.DEBUG_LOG('Setting custom header with token:', token);
-            return {
-              Authorization: token
-            };
-          } catch (error) {
-            window.DEBUG_LOG('Error getting auth header:', error);
-            return {};
-          }
-        }
-      },
+        region: process.env.REACT_APP_REGION
+      }
     ]
   }
 };

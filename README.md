@@ -1,6 +1,17 @@
 # CloudFinalProject
-
 A cloud-based event management system built with AWS CDK, React, and Node.js.
+
+#AWS Services Used
+- CDK
+- Lambda
+- RDS
+- S3
+- Cognito
+- API Gateway
+
+#Github Repositories
+- The completed GitHub repository with all of the correct code for the project is at https://github.com/jackfallon/CloudFinalProject
+- The first GitHub repository that was used, but contains incorrect, outdated code for the project is at https://github.com/jackfallon/EventManager
 
 ## Project Structure
 
@@ -10,7 +21,6 @@ A cloud-based event management system built with AWS CDK, React, and Node.js.
 
 ## Useful commands
 
-* `npm run test`         perform the jest unit tests
 * `npx cdk deploy`       deploy this stack to your default AWS account/region
 * `npx cdk diff`         compare deployed stack with current state
 * `npx cdk synth`        emits the synthesized CloudFormation template

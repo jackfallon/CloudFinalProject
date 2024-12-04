@@ -1,86 +1,126 @@
 const AWS = require('aws-sdk');
-const cognito = new AWS.CognitoIdentityServiceProvider();
+
+// Common headers
+const headers = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': '*',
+  'Access-Control-Allow-Methods': '*'
+};
+
+// Empty events database
+let events = [];
 
 exports.handler = async (event, context) => {
   console.log('Event:', JSON.stringify(event, null, 2));
   
-  // Extract the authorization header
-  const authHeader = event.headers ? event.headers.Authorization || event.headers.authorization : undefined;
-  console.log('Auth header:', authHeader);
-  
-  if (!authHeader) {
+  // Handle OPTIONS requests
+  if (event.httpMethod === 'OPTIONS') {
     return {
-      statusCode: 401,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true
-      },
-      body: JSON.stringify({ message: 'Authorization header is missing' })
+      statusCode: 200,
+      headers,
+      body: ''
     };
   }
 
   try {
-    // Verify the JWT token
-    const token = authHeader.replace('Bearer ', '');
-    const userInfo = await cognito.getUser({
-      AccessToken: token
-    }).promise();
-    
-    console.log('User info:', JSON.stringify(userInfo, null, 2));
-
-    // Handle different HTTP methods
-    switch (event.httpMethod) {
-      case 'GET':
-        // Return mock events for now
-        return {
-          statusCode: 200,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Credentials': true
-          },
-          body: JSON.stringify([
-            {
-              id: '1',
-              title: 'Sample Event 1',
-              description: 'This is a sample event',
-              datetime: new Date().toISOString(),
-              location: 'Sample Location'
-            }
-          ])
-        };
-      
-      case 'POST':
-        // Handle event creation
-        const body = JSON.parse(event.body);
-        // Add event creation logic here
-        return {
-          statusCode: 201,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Credentials': true
-          },
-          body: JSON.stringify({ message: 'Event created successfully' })
-        };
-      
-      default:
-        return {
-          statusCode: 405,
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Credentials': true
-          },
-          body: JSON.stringify({ message: 'Method not allowed' })
-        };
+    // Handle different HTTP methods and paths
+    if (event.httpMethod === 'GET' && event.resource === '/events') {
+      // Return all events
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(events)
+      };
     }
+    
+    if (event.httpMethod === 'GET' && event.resource === '/events/{id}') {
+      // Return specific event
+      const eventId = event.pathParameters.id;
+      const foundEvent = events.find(e => e.id === eventId);
+      
+      if (!foundEvent) {
+        return {
+          statusCode: 404,
+          headers,
+          body: JSON.stringify({ message: 'Event not found' })
+        };
+      }
+      
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(foundEvent)
+      };
+    }
+    
+    if (event.httpMethod === 'POST' && event.resource === '/events') {
+      const body = JSON.parse(event.body);
+      const newEvent = {
+        id: String(events.length + 1),
+        ...body,
+        participants: []
+      };
+      events.push(newEvent);
+      return {
+        statusCode: 201,
+        headers,
+        body: JSON.stringify({ 
+          message: 'Event created successfully',
+          event: newEvent
+        })
+      };
+    }
+    
+    if (event.httpMethod === 'POST' && event.resource === '/events/signup') {
+      const body = JSON.parse(event.body);
+      const { eventId, userEmail } = body;
+      const eventIndex = events.findIndex(e => e.id === eventId);
+      
+      if (eventIndex === -1) {
+        return {
+          statusCode: 404,
+          headers,
+          body: JSON.stringify({ message: 'Event not found' })
+        };
+      }
+      
+      // Check if user is already signed up
+      if (events[eventIndex].participants.includes(userEmail)) {
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({ message: 'You are already signed up for this event' })
+        };
+      }
+      
+      // Add the user's email to the participants list
+      events[eventIndex].participants.push(userEmail);
+      
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({ 
+          message: 'Successfully signed up for event',
+          eventId: eventId,
+          participant: userEmail
+        })
+      };
+    }
+    
+    return {
+      statusCode: 404,
+      headers,
+      body: JSON.stringify({ message: 'Route not found' })
+    };
   } catch (error) {
     console.error('Error:', error);
     return {
-      statusCode: 401,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Credentials': true
-      },
-      body: JSON.stringify({ message: 'Invalid or expired token', error: error.message })
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ 
+        message: 'Internal server error',
+        error: error.message
+      })
     };
   }
 }; 
