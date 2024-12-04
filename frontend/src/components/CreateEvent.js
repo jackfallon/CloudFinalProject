@@ -11,14 +11,18 @@ import {
 } from '@mui/material';
 
 function CreateEvent() {
+  // useNavigete() to navigate throughout the app, redirect the user to different routes
   const navigate = useNavigate();
+  // formData initialized with empty values
+  // setFormData updates the formData 
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     datetime: '',
     location: '',
   });
-
+  // handleChange function update the corresponding field in the form data state based on user's input
+  // ...formData preserves the previous values and only change field were new form is different
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -29,12 +33,14 @@ function CreateEvent() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // retrieves current authenticated session using Auth.currentSession() from AWS Amplify
       const session = await Auth.currentSession();
-      const token = session.getIdToken().getJwtToken();
-
+          // const token = session.getIdToken().getJwtToken();
+      // Making a post request to the/events endpoint using API.post to the backend and the formData as the body
+      // Upon success of event creation, it navigates to the user homepage, logged to the console otherwise
       await API.post('events', '/events', {
         headers: {
-          Authorization: token
+           // Authorization: token
         },
         body: formData,
       });
