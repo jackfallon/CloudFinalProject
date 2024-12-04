@@ -26,4 +26,4 @@ A cloud-based event management system built with AWS CDK, React, and Node.js. Th
 * `npx cdk synth`        emits the synthesized CloudFormation template
 
 ## Deployment Instructions
-
+1. 
