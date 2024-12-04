@@ -1,5 +1,5 @@
 # CloudFinalProject
-A cloud-based event management system built with AWS CDK, React, and Node.js.
+A cloud-based event management system built with AWS CDK, React, and Node.js. This application allows users to create an account, and create/view events. Other users can view these events, and sign-up for them.
 
 ## AWS Services Used
 - CDK
@@ -24,3 +24,6 @@ A cloud-based event management system built with AWS CDK, React, and Node.js.
 * `npx cdk deploy`       deploy this stack to your default AWS account/region
 * `npx cdk diff`         compare deployed stack with current state
 * `npx cdk synth`        emits the synthesized CloudFormation template
+
+## Deployment Instructions
+
