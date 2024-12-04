@@ -26,4 +26,7 @@ A cloud-based event management system built with AWS CDK, React, and Node.js. Th
 * `npx cdk synth`        emits the synthesized CloudFormation template
 
 ## Deployment Instructions
-1. 
+1. In the root project directory, run 'cdk deploy' to deploy the CDK infrastructure
+2. When the CDK is deployed, values such as UserPoolID, UserPoolClientID, etc. will be printed
+3. Enter these values in the frontend directory's .env and .env.development files
+4. Run 'cd frontend' and 'npm run build' to build the React frontend
