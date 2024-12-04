@@ -28,6 +28,7 @@ function EventDetails() {
   const fetchEventDetails = async () => {
     try {
       window.DEBUG_LOG('Fetching event details for:', id);
+      // API GET call to get the event with matching id
       const eventData = await API.get('events', `/events/${id}`);
       window.DEBUG_LOG('Event data:', eventData);
       setEvent(eventData);
