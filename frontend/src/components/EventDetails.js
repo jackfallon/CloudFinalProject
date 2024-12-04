@@ -26,22 +26,26 @@ function EventDetails() {
 
   const fetchEventDetails = async () => {
     try {
+      // retrieves the current authentication session using AWS Amplify’s Auth module, which returns the user’s session information.
       const session = await Auth.currentSession();
-      const token = session.getIdToken().getJwtToken();
-
+          // const token = session.getIdToken().getJwtToken();
+      // sends a GET request to the API Gateway (through AWS Amplify’s API module) to fetch the event details for the event with the specified id
+      // (using /events/${id} in the URl, the feteched event is stored in eventData
       const eventData = await API.get('events', `/events/${id}`, {
         headers: {
-          Authorization: token
+            //Authorization: token
         }
       });
       setEvent(eventData);
-      // Fetch participants if available in your API
+      // GET API request is sent to fetch participants that have the same id
       const participantsData = await API.get('events', `/events/${id}/participants`, {
         headers: {
-          Authorization: token
+          //Authorization: token
         }
       });
+      // Sets participants to participants data. 
       setParticipants(participantsData);
+      // Loading part to be false
       setLoading(false);
     } catch (error) {
       console.error('Error fetching event details:', error);
@@ -51,9 +55,10 @@ function EventDetails() {
 
   const handleSignUp = async () => {
     try {
+      // retrieves the current session from AWS amplify and provides authentication details
       const session = await Auth.currentSession();
-      const token = session.getIdToken().getJwtToken();
-
+          //const token = session.getIdToken().getJwtToken();
+      // function making a post request to an API endpoint (/events/signup) 
       await API.post('events', '/events/signup', {
         headers: {
           Authorization: token
