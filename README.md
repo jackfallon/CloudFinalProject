@@ -4,10 +4,10 @@ A cloud-based event management system built with AWS CDK, React, and Node.js. Th
 ## AWS Services Used
 - CDK
 - Lambda
-- RDS
 - S3
 - Cognito
 - API Gateway
+- CloudFront
 
 ## Github Repositories
 - The completed GitHub repository with all of the correct code for the project is at https://github.com/jackfallon/CloudFinalProject
@@ -30,3 +30,4 @@ A cloud-based event management system built with AWS CDK, React, and Node.js. Th
 2. When the CDK is deployed, values such as UserPoolID, UserPoolClientID, etc. will be printed
 3. Enter these values in the frontend directory's .env and .env.development files
 4. Run 'cd frontend' and 'npm run build' to build the React frontend
+5. Run 'cd ..' and deploy the application again with 'cdk deploy'
